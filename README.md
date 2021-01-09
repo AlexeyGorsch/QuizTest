@@ -1,6 +1,6 @@
 # QuizTest
 
-[GitHub Pages]https://github.com/AlexeyGorsch/QuizTest/releases/tag/v0.3.3
+[GitHub Pages](https://github.com/AlexeyGorsch/QuizTest/releases/tag/v0.3.3)
 
 
 Click to watch the video
