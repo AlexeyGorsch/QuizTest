@@ -1,6 +1,6 @@
 # QuizTest
 
-Download [Quiz v0.4](https://github.com/AlexeyGorsch/QuizTest/releases/download/v0.3.3/v.0.3.3.zip)
+Download [Quiz v0.4](https://github.com/AlexeyGorsch/QuizTest/releases/tag/v0.4)
 
 
 Click to watch the video
