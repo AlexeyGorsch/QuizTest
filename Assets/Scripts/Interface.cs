@@ -8,134 +8,223 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 [SerializeField]
-//public class Interface : MonoBehaviour
 public class Interface : QuestionsDB
 {
+    public GameObject
+    windowStart, windowQuestions, windowResult, windowLanguage;   //windows
 
-    //public Question[] questions;
-    public Button buttonStart, buttonNext, buttonReturn, buttonExit, buttonExitInResult, buttonExitInQuestions, buttonReturnInQuestions;
+    public Button
+    buttonStartOnStartWindow, buttonLangOnStartWindow, buttonExitOnStartWindow,                                     //windowStart
 
-    public Text questionTextField, rightAnswerTextField, wrongAnswerTextField;
-    public Button[] buttonAnswer;
+    buttonNextOnQuestionsWindow, buttonReturnOnQuestionsWindow, buttonExitOnQuestionsWindow,                        //windowQuestions
 
-    public GameObject windowStart, windowQuestions, windowResult;
+    buttonReturnOnResultWindow, buttonExitOnResultWindow,                                                           //windowResult
 
-    private int _id = 0;
+    buttonReturnOnLanguageWindow, buttonRusOnLanguageWindow, buttonEngOnLanguageWindow, buttonChiOnLanguageWindow;  //windowLanguage
+
+    public Button[] buttonAnswer;                   //windowQuestions
+
+    public Color rightColor, wrongColor;            //windowsQuestions
+
+    public Text
+    questionTextField,                              //windowQuestions
+
+    rightAnswerTextField, wrongAnswerTextField;     //windowResult
+
+    public static Color myColor = new Color(255f / 255f, 210f / 255f, 167f / 255f, 1);
+    public List<Lang> languageForButton = new List<Lang>();
+     
+     public string lang = "eng";
+
+
+
+    private int _id = 0, _idA;
+
     private int _countRight, _countWrong;
+
     private bool _done = false;
 
-    public int Id { get => _id; set => _id = value; }
-    public bool Done { get => _done; set => _done = value; }
-    public int CountRight { get => _countRight; set => _countRight = value; }
-    public int CountWrong { get => _countWrong; set => _countWrong = value; }
 
-    public void Run()
+    public void ActiveWindows(string window)
     {
-        ActiveWindows(true, false, false);
-        buttonStart.GetComponent<Button>().onClick.AddListener(Load);
-        buttonExit.GetComponent<Button>().onClick.AddListener(Exit);
-        SelectLang();
+        switch (window)
+        {
+            default:
+            case "windowStart":
+                windowQuestions.SetActive(false);
+                windowResult.SetActive(false);
+                windowLanguage.SetActive(false);
+                windowStart.SetActive(true);
+                break;
+            case "windowQuestions":
+                windowResult.SetActive(false);
+                windowLanguage.SetActive(false);
+                windowStart.SetActive(false);
+                windowQuestions.SetActive(true);
+                break;
+            case "windowLanguage":
+                windowResult.SetActive(false);
+                windowQuestions.SetActive(false);
+                windowStart.SetActive(false);
+                windowLanguage.SetActive(true);
+                break;
+            case "windowResult":
+                windowQuestions.SetActive(false);
+                windowStart.SetActive(false);
+                windowLanguage.SetActive(false);
+                windowResult.SetActive(true);
+                break;
+        }
+
     }
 
-    public void Load()
+    //  public void ActiveWindows(GameObject window)
+    //  {
+    //     // windowStart     .SetActive(false);
+    //     // windowQuestions .SetActive(false);
+    //     // windowResult    .SetActive(false);
+    //     // windowLanguage  .SetActive(false);
+
+    //     // window          .SetActive(true); 
+    //  }
+
+    public void ToWindowStart() => ActiveWindows("windowStart");
+
+    public void Exit() => Application.Quit();
+
+    public void ToWindowLanguage()
     {
-        ActiveWindows(false, true, false);
+        ActiveWindows("windowLanguage");
+        // Language.buttonRusOnLanguageWindow = buttonRusOnLanguageWindow;
+        // Language.buttonEngOnLanguageWindow = buttonEngOnLanguageWindow;
+        // Language.buttonChiOnLanguageWindow = buttonChiOnLanguageWindow;
+        // Language.languageForButton = languageForButton;
+        //Language.SelectLang();
+    }
+
+    public void ToWindowQuestion()
+    {
+        ActiveWindows("windowQuestions");
+        _done = false;
         _id = 0;
         _countRight = 0;
         _countWrong = 0;
         Shuffle();
         Quest();
+
     }
+
     public void Quest()
     {
-
-        switch (lang)
+        if (lang == "eng")
         {
-            case true:
-                questionTextField.GetComponent<Text>().text = questions[_id].questionRus;
-
-                int i = 0;
-                foreach (var button in buttonAnswer)
-                {
-                    button.GetComponent<Button>().image.color = Color.white;
-                    button.GetComponentInChildren<Text>().text = questions[_id].ask[i].answerRus;
-                    ++i;
-                }
-                break;
-            case false:
-            default:
-                questionTextField.GetComponent<Text>().text = questions[_id].questionEng;
-
-                int c = 0;
-                foreach (var button in buttonAnswer)
-                {
-                    button.GetComponent<Button>().image.color = Color.white;
-                    button.GetComponentInChildren<Text>().text = questions[_id].ask[c].answerEng;
-                    ++c;
-                }
-                break;
+            questionTextField.GetComponent<Text>().text = questions[_id].questionEng;
+            _idA = 0;
+            foreach (var button in buttonAnswer)
+            {
+                button.GetComponent<Button>().image.color = Color.white;
+                button.GetComponentInChildren<Text>().text = questions[_id].ask[_idA].answerEng;
+                _idA++;
+            }
         }
-        buttonReturnInQuestions.GetComponent<Button>().onClick.AddListener(Return);
-        buttonExitInQuestions.GetComponent<Button>().onClick.AddListener(Exit);
-
+        if (lang == "rus")
+        {
+            questionTextField.GetComponent<Text>().text = questions[_id].questionRus;
+            _idA = 0;
+            foreach (var button in buttonAnswer)
+            {
+                button.GetComponent<Button>().image.color = Color.white;
+                button.GetComponentInChildren<Text>().text = questions[_id].ask[_idA].answerRus;
+                _idA++;
+            }
+        }
+        if (lang == "chi")
+        {
+            questionTextField.GetComponent<Text>().text = questions[_id].questionChi;
+            _idA = 0;
+            foreach (var button in buttonAnswer)
+            {
+                button.GetComponent<Button>().image.color = Color.white;
+                button.GetComponentInChildren<Text>().text = questions[_id].ask[_idA].answerChi;
+                _idA++;
+            }
+        }
     }
 
-    public void Result()
+    public void ToWindowsResult()
     {
+        ActiveWindows("windowResult");
 
-        if (lang == false)
+        if (lang == "eng")
         {
             rightAnswerTextField.GetComponent<Text>().text = "Right answers: " + _countRight;
 
             wrongAnswerTextField.GetComponent<Text>().text = "Wrong answers: " + _countWrong;
         }
-        else if (lang == true)
+        else if (lang == "rus")
         {
             rightAnswerTextField.GetComponent<Text>().text = "Правильных ответов: " + _countRight;
 
             wrongAnswerTextField.GetComponent<Text>().text = "Неправильных ответов: " + _countWrong;
+
+        }
+        else if (lang == "chi")
+        {
+            rightAnswerTextField.GetComponent<Text>().text = "正确答案: " + _countRight;
+
+            wrongAnswerTextField.GetComponent<Text>().text = "错误答案: " + _countWrong;
         }
 
-        ActiveWindows(false, false, true);
-        buttonReturn.GetComponent<Button>().onClick.AddListener(Return);
-        buttonExitInResult.GetComponent<Button>().onClick.AddListener(Exit);
 
     }
-    public void Return()
-    {
-        ActiveWindows(true, false, false);
-
-    }
-    public void Exit()
-    {
-        Application.Quit();
-    }
-
 
     public void ButtonPush()
     {
-
         if (_done == false)
         {
-            buttonAnswer[0].GetComponent<Button>().onClick.AddListener(delegate { Answer(0); });
-            buttonAnswer[1].GetComponent<Button>().onClick.AddListener(delegate { Answer(1); });
-            buttonAnswer[2].GetComponent<Button>().onClick.AddListener(delegate { Answer(2); });
-            buttonAnswer[3].GetComponent<Button>().onClick.AddListener(delegate { Answer(3); });
+            buttonAnswer[0].GetComponent<Button>().onClick.AddListener(delegate { AnswerCheck(0); });
+            buttonAnswer[1].GetComponent<Button>().onClick.AddListener(delegate { AnswerCheck(1); });
+            buttonAnswer[2].GetComponent<Button>().onClick.AddListener(delegate { AnswerCheck(2); });
+            buttonAnswer[3].GetComponent<Button>().onClick.AddListener(delegate { AnswerCheck(3); });
+
+            buttonNextOnQuestionsWindow.GetComponent<MyEventTrigger>().enabled = false;
+            foreach (var button in buttonAnswer)
+                button.GetComponent<MyEventTrigger>().enabled = true;
 
         }
         else if (_done == true)
 
-            buttonNext.GetComponent<Button>().onClick.AddListener(NextQuestion);
+        {
+
+            buttonNextOnQuestionsWindow.GetComponent<Button>().onClick.AddListener(NextQuestion);
+            buttonNextOnQuestionsWindow.GetComponent<MyEventTrigger>().enabled = true;
+            foreach (var button in buttonAnswer)
+                button.GetComponent<MyEventTrigger>().enabled = false;
+        }
+        buttonStartOnStartWindow.GetComponent<Button>().onClick.AddListener(ToWindowQuestion);
+        buttonExitOnStartWindow.GetComponent<Button>().onClick.AddListener(Exit);
+        buttonLangOnStartWindow.GetComponent<Button>().onClick.AddListener(ToWindowLanguage);
+        buttonReturnOnLanguageWindow.GetComponent<Button>().onClick.AddListener(ToWindowStart);
+        buttonReturnOnResultWindow.GetComponent<Button>().onClick.AddListener(ToWindowStart);
+        buttonExitOnResultWindow.GetComponent<Button>().onClick.AddListener(Exit);
+        buttonReturnOnQuestionsWindow.GetComponent<Button>().onClick.AddListener(ToWindowStart);
+        buttonExitOnQuestionsWindow.GetComponent<Button>().onClick.AddListener(Exit);
+
+        buttonRusOnLanguageWindow.GetComponent<Button>().onClick.AddListener(delegate { MakeLang("rus"); });
+        buttonEngOnLanguageWindow.GetComponent<Button>().onClick.AddListener(delegate { MakeLang("eng"); });
+        buttonChiOnLanguageWindow.GetComponent<Button>().onClick.AddListener(delegate { MakeLang("chi"); });
 
     }
 
-    public void Answer(int number)
+    public void AnswerCheck(int number)
     {
         if (questions[_id].ask[number].right == true && _done == false)
         {
             buttonAnswer[number].GetComponent<Button>().image.color = rightColor;
+            RightAnswerFX();
             CounterRight(_countRight);
         }
         else if (_done == false)
@@ -148,13 +237,15 @@ public class Interface : QuestionsDB
 
                     buttonAnswer[i].GetComponent<Button>().image.color = rightColor;
             }
+            WrongAnswerFX();
             CounterWrong(_countWrong);
         }
+
     }
 
     public void NextQuestion()
     {
-        if (_id == questions.Count) Result();
+        if (_id == questions.Count) ToWindowsResult();
         else
         {
             Quest();
@@ -169,8 +260,8 @@ public class Interface : QuestionsDB
             this._id = count += 1;
             _done = false;
         }
-
     }
+
     public void CounterRight(int count)
     {
         if (_done != true)
@@ -180,6 +271,7 @@ public class Interface : QuestionsDB
         }
 
     }
+
     public void CounterWrong(int count)
     {
         if (_done != true)
@@ -190,65 +282,66 @@ public class Interface : QuestionsDB
 
     }
 
-    public void ActiveWindows(bool start, bool questions, bool result)
+
+    
+    public void MakeLang(string langc)
     {
-        this.windowStart.SetActive(start);
-        this.windowQuestions.SetActive(questions);
-        this.windowResult.SetActive(result);
-    }
+        lang = langc;
+        buttonEngOnLanguageWindow.GetComponent<Button>().image.color = Color.white;
+        buttonRusOnLanguageWindow.GetComponent<Button>().image.color = Color.white;
+        buttonChiOnLanguageWindow.GetComponent<Button>().image.color = Color.white;
 
-
-    public Button rus, eng;
-
-    public Color myColor, rightColor, wrongColor;
-
-
-
-    public void SelectLang()
-    {
-        myColor = new Color(255f / 255f, 210f / 255f, 167f / 255f, 1);
-        lang = false;
-
-        rus.GetComponent<Button>().onClick.AddListener(delegate { lang = true; MakeLang(); });
-        eng.GetComponent<Button>().onClick.AddListener(delegate { lang = false; MakeLang(); });
-
-    }
-    public void MakeLang()
-    {
-
-        if (lang == true)
+        if (lang == "rus")
         {
-            Debug.Log("true");
-            rus.GetComponent<Button>().image.color = myColor;
-            eng.GetComponent<Button>().image.color = Color.white;
+            buttonRusOnLanguageWindow.GetComponent<Button>().image.color = myColor;
+
 
             int x = 0;
-            foreach (var button in langs)
+            foreach (var button in languageForButton)
             {
 
-                langs[x].button.GetComponentInChildren<Text>().text = langs[x].RusText;
+
+                languageForButton[x].button.GetComponentInChildren<Text>().text = languageForButton[x].rusText;
                 ++x;
             }
 
 
         }
 
-        if (lang == false)
+        if (lang == "eng")
 
         {
-            Debug.Log("false"); eng.GetComponent<Button>().image.color = myColor;
-            rus.GetComponent<Button>().image.color = Color.white;
+            buttonEngOnLanguageWindow.GetComponent<Button>().image.color = myColor;
+
 
 
             int x = 0;
-            foreach (var button in langs)
+            foreach (var button in languageForButton)
             {
 
-                langs[x].button.GetComponentInChildren<Text>().text = langs[x].EngText;
+                languageForButton[x].button.GetComponentInChildren<Text>().text = languageForButton[x].engText;
+                ++x;
+            }
+
+        }
+        if (lang == "chi")
+
+        {
+            buttonChiOnLanguageWindow.GetComponent<Button>().image.color = myColor;
+
+
+
+            int x = 0;
+            foreach (var button in languageForButton)
+            {
+
+                languageForButton[x].button.GetComponentInChildren<Text>().text = languageForButton[x].chiText;
                 ++x;
             }
 
         }
     }
+
 }
+
 

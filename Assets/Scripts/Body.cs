@@ -4,22 +4,27 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class Body : Interface
+public class Body : AddEventTrigger
 {
- 
     void Start()
     {
-        Run();
         QuestionsInitDB();
+        MyButtonAdd();
+        AddEventTriggerOnButton();
+        ToWindowStart();
     }
 
-    // Update is called once per frame
     void Update()
     {
         ButtonPush();
-        Debug.Log(Done);
-        Debug.Log("id :" + Id);
-        Debug.Log("countRight :" + CountRight);
-        Debug.Log("countWrong :" + CountWrong);
+
+        // Debug.Log(Done);
+        // Debug.Log("id :" + Id);
+        // Debug.Log("countRight :" + CountRight);
+        // Debug.Log("countWrong :" + CountWrong);
+        // if (Input.GetKeyDown(KeyCode.Space))
+        // {
+        //     WrongAnswerFX();
+        // }
     }
 }
